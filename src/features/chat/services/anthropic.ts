@@ -14,9 +14,9 @@ export async function streamAnthropicResponse(
       "x-api-key": ANTHROPIC_API_KEY,
     },
     body: JSON.stringify({
-      model: "claude-2.1",
+      model: "claude-sonnet-4-20250514",
       input: prompt,
-      max_tokens: 800,
+      max_tokens: 1024,
       stream: true,
     }),
   });

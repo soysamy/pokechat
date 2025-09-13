@@ -1,6 +1,5 @@
 // core/api/anthropicClient.ts
-import Constants from "expo-constants";
+import { ANTHROPIC_API_KEY as KEY } from "@env";
 
-export const ANTHROPIC_API_KEY =
-  Constants.expoConfig?.extra?.ANTHROPIC_API_KEY || "";
+export const ANTHROPIC_API_KEY = KEY || "";
 export const ANTHROPIC_BASE = "https://api.anthropic.com/v1";
