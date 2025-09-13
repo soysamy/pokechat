@@ -1,10 +1,12 @@
-import axios from "axios";
+import { fetchPokemon } from "../../../core/api/pokeApiTool";
 
-export async function getPokemon(name: string) {
-  const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
-  return {
-    name: res.data.name,
-    sprite: res.data.sprites.front_default,
-    types: res.data.types.map((t: any) => t.type.name),
-  };
+export async function runPokemonTool(query: string) {
+  const name = query.trim().split(/\s+/).pop() || query;
+  try {
+    const data = await fetchPokemon(name);
+    return data;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 }
