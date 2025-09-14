@@ -11,7 +11,7 @@ import LoginScreen from "./src/screens/LoginScreen";
 
 export type RootStackParamList = {
   Login: undefined;
-  Home: undefined;
+  Chat: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -27,7 +27,7 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="Home"
+            name="Chat"
             component={ChatScreen}
             options={{ title: "Pokédex" }}
           />

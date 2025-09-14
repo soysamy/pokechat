@@ -14,7 +14,7 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     // fake login just for the sake of the example project
-    navigation.replace("Home");
+    navigation.replace("Chat");
   };
 
   return (
