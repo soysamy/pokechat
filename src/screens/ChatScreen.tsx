@@ -1,6 +1,7 @@
 // screens/ChatScreen.tsx
 import React, { useState } from "react";
 import { Button, TextInput, View } from "react-native";
+import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { streamAnthropicResponse } from "../features/chat/services/anthropic";
 import { runPokemonTool } from "../features/chat/services/pokemonApi";
@@ -13,8 +14,12 @@ export const ChatScreen = () => {
 
   async function handleSend() {
     if (!text.trim()) return;
-    const userMsg = { id: uuidv4(), role: "user" as const, text };
-    addMessage(userMsg);
+    try {
+      const userMsg = { id: uuidv4(), role: "user" as const, text };
+      addMessage(userMsg);
+    } catch (error) {
+      console.error("Error sending user message:", error);
+    }
 
     const aiId = uuidv4();
     addMessage({ id: aiId, role: "ai", text: "" });
@@ -37,6 +42,7 @@ export const ChatScreen = () => {
         (prev: any) => ({ text: (prev?.text || "") + chunk } as any)
       );
     }).catch((e) => {
+      console.error("Error streaming Anthropic response:", e);
       updateMessage(aiId, { text: "Error: " + String(e) });
     });
 

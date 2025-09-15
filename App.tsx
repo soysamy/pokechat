@@ -7,7 +7,7 @@ import { paperTheme } from "./src/theme";
 
 // Screens
 import { ChatScreen } from "./src/screens/ChatScreen";
-import LoginScreen from "./src/screens/LoginScreen";
+import { LoginScreen } from "./src/screens/LoginScreen";
 
 export type RootStackParamList = {
   Login: undefined;

@@ -6,7 +6,7 @@ import { Image, StyleSheet, View } from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
 import type { RootStackParamList } from "../../App";
 
-export default function LoginScreen() {
+export const LoginScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [username, setUsername] = useState("");
@@ -54,7 +54,7 @@ export default function LoginScreen() {
       </Card>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
