@@ -1,69 +1,56 @@
-// hooks/useAnthropicStream.ts
-import { useEffect } from "react";
+// hooks/useAnthropicRequest.ts
+import Constants from "expo-constants";
+import { useState } from "react";
 
-export function useAnthropicStream(
-  prompt: string,
-  onChunk: (chunk: string) => void
-) {
-  useEffect(() => {
-    if (!prompt) return;
+interface UseAnthropicRequestReturn {
+  response: string;
+  loading: boolean;
+  ask: (prompt: string) => Promise<void>;
+}
 
-    let isCancelled = false;
+export function useAnthropicRequest(): UseAnthropicRequestReturn {
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    async function stream() {
-      try {
-        const response = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key":
-              "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",
-            "anthropic-version": "2023-06-01",
-          },
-          body: JSON.stringify({
-            model: "claude-3-opus-20240229",
-            max_tokens: 256,
-            stream: true,
-            messages: [{ role: "user", content: prompt }],
-          }),
-        });
+  const ask = async (prompt: string) => {
+    setLoading(true);
+    setResponse("");
 
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder("utf-8");
+    try {
+      const apiKey = Constants.expoConfig?.extra?.ANTHROPIC_API_KEY;
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey!,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model: "claude-3-opus-20240229",
+          stream: false, // <-- no streaming
+          max_tokens: 512,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
 
-        if (!reader) {
-          console.error("No reader available on response body");
-          return;
-        }
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done || isCancelled) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-
-          // Anthropic streams JSON objects line by line
-          chunk.split("\n").forEach((line) => {
-            if (line.trim().startsWith("{")) {
-              try {
-                const data = JSON.parse(line);
-                const text = data.delta?.text ?? "";
-                if (text) onChunk(text);
-              } catch (err) {
-                // skip non-JSON lines like keep-alive
-              }
-            }
-          });
-        }
-      } catch (err) {
-        console.error("Streaming error:", err);
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Anthropic error:", errorText);
+        setResponse("Error: " + errorText);
+        return;
       }
+
+      const data = await res.json();
+      // extract text (depends on Anthropic response format)
+      const text = data.completion ?? data.choices?.[0]?.message?.content ?? "";
+      setResponse(text);
+    } catch (err) {
+      console.error(err);
+      setResponse("Request failed");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    stream();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [prompt]);
+  return { response, loading, ask };
 }
