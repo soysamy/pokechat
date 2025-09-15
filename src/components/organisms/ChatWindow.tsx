@@ -12,7 +12,7 @@ export const ChatWindow = () => {
         data={messages}
         keyExtractor={(i) => i.id}
         renderItem={({ item }) => (
-          <ChatBubble text={item.text} role={item.role} />
+          <ChatBubble text={item.content} role={item.role} image={item.image} />
         )}
       />
     </View>
