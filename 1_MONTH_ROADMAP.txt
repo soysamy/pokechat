@@ -1,0 +1,29 @@
+# 1-Month Roadmap for PokeChat Improvements
+
+## Week 1: UI & Style Enhancements
+- Audit all screens for visual consistency (colors, spacing, typography)
+- Refine the theme and style files for easier customization
+- Improve button, input, and chat bubble styles for a more modern look
+- Add light/dark mode toggle and test across devices
+
+## Week 2: UX Improvements
+- Streamline onboarding/login flow for new users
+- Add helpful error messages and loading indicators throughout the app
+- Polish chat interactions (auto-scroll, better input focus, smoother animations)
+- Improve accessibility (contrast, font sizes, screen reader support)
+
+## Week 3: Security & Credentials
+- Move all API keys and sensitive config to secure storage (e.g., Expo SecureStore)
+- Audit codebase to ensure no secrets are hardcoded or exposed
+- Add .env support and update documentation for local development
+- Implement basic rate limiting and abuse prevention on API calls
+
+## Week 4: Biometric Authentication & Final Polish
+- Integrate biometric authentication (Face ID, Touch ID) for login and/or sensitive actions
+- Add settings screen to manage security preferences
+- Test biometric flows on both iOS and Android
+- Final bug bash and UI/UX polish based on user feedback
+
+---
+
+This roadmap should help make PokeChat look better, feel smoother, and be more secure for everyone using it!
