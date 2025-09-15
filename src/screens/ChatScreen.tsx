@@ -1,13 +1,8 @@
 // screens/ChatScreen.tsx
 import React, { useState } from "react";
-import {
-  Button,
-  KeyboardAvoidingView,
-  Platform,
-  TextInput,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, TextInput, View } from "react-native";
 import "react-native-get-random-values";
+import { Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ChatWindow } from "../components/organisms/ChatWindow";
 import { useChatStore } from "../features/chat/store/pokeChatStore";
@@ -34,14 +29,19 @@ export const ChatScreen = () => {
           style={{ flex: 1, borderWidth: 1, padding: 8, borderRadius: 8 }}
         />
         <Button
-          title="Send"
+          mode="contained"
+          contentStyle={{ paddingHorizontal: 16, paddingVertical: 8 }}
+          labelStyle={{ fontSize: 16 }}
+          loading={loading}
           onPress={() => {
             if (!input.trim()) return;
             sendPrompt(input);
             setInput("");
           }}
           disabled={loading}
-        />
+        >
+          Send
+        </Button>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

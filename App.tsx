@@ -29,7 +29,7 @@ export default function App() {
           <Stack.Screen
             name="Chat"
             component={ChatScreen}
-            options={{ title: "Pokédex" }}
+            options={{ title: "AI Powered Pokédex" }}
           />
         </Stack.Navigator>
       </NavigationContainer>

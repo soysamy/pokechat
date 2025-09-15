@@ -17,6 +17,31 @@ interface ChatStore {
   sendPrompt: (prompt: string) => Promise<void>;
 }
 
+async function streaming(
+  text: string,
+  image?: string,
+  addMessage?: (role: "ai", content: string, image?: string) => void
+){
+  return new Promise<void>((resolve) => {
+    let i = 0;
+    let buffer = "";
+
+    const interval = setInterval(()=> {
+      buffer += text[i];
+      i++;
+
+      // replacing last message
+      if (addMessage) {
+        addMessage("ai", buffer, image);
+      }
+      if(i >= text.length){
+        clearInterval(interval);
+        resolve();
+      }
+    }, 40);
+  });
+}
+
 export const useChatStore = create<ChatStore>((set, get) => ({
   messages: [],
   loading: false,
@@ -35,7 +60,6 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     // Add user message immediately
     get().addMessage("user", prompt);
-
     set({ loading: true });
 
 
@@ -83,6 +107,20 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       const data = await res.json();
       const text = data.content ?? data.content?.[0]?.text ?? "";
+
+      // Simulate streaming response
+      await streaming(text, pokemonSprite, (role, content, image) => {
+        // Remove last AI message and add updated one
+        set((state)=> {
+          const msgs = [...state.messages];
+          if(msgs.length > 0 && msgs[msgs.length -1].role === "ai"){
+            msgs[msgs.length -1] = {role, content, image, id: msgs[msgs.length -1].id};
+          } else {
+            msgs.push({role, content, image, id: uuidv4()});
+          }
+          return { messages: msgs };
+        })
+      })
 
       get().addMessage("ai", text[0].text || "No response", pokemonSprite);
     } catch (err) {
