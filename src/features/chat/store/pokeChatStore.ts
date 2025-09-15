@@ -1,25 +1,72 @@
+// store/useChatStore.ts
+import Constants from "expo-constants";
 import { create } from "zustand";
 
-export type ChatMessage = {
-  id: string;
-  text: string;
-  role: "user" | "ai";
-  meta?: any;
-};
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
 
-type ChatState = {
+interface ChatStore {
   messages: ChatMessage[];
-  addMessage: (m: ChatMessage) => void;
-  updateMessage: (id: string, patch: Partial<ChatMessage>) => void;
-  clear: () => void;
-};
+  loading: boolean;
+  addMessage: (role: "user" | "assistant", content: string) => void;
+  sendPrompt: (prompt: string) => Promise<void>;
+}
 
-export const useChatStore = create<ChatState>((set) => ({
+export const useChatStore = create<ChatStore>((set, get) => ({
   messages: [],
-  addMessage: (m) => set((s) => ({ messages: [...s.messages, m] })),
-  updateMessage: (id, patch) =>
-    set((s) => ({
-      messages: s.messages.map((m) => (m.id === id ? { ...m, ...patch } : m)),
+  loading: false,
+
+  addMessage: (role, content) =>
+    set((state) => ({
+      messages: [...state.messages, { role, content }],
     })),
-  clear: () => set({ messages: [] }),
+
+  sendPrompt: async (prompt: string) => {
+    const apiKey = Constants.expoConfig?.extra?.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      console.error("Missing Anthropic API Key");
+      return;
+    }
+
+    // Add user message immediately
+    get().addMessage("user", prompt);
+
+    set({ loading: true });
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model: "claude-3-opus-20240229",
+          stream: false,
+          max_tokens: 512,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Anthropic error:", errorText);
+        get().addMessage("assistant", "Error: " + errorText);
+        return;
+      }
+
+      const data = await res.json();
+      const text = data.completion ?? data.content?.[0]?.text ?? "";
+
+      get().addMessage("assistant", text);
+    } catch (err) {
+      console.error("Request failed:", err);
+      get().addMessage("assistant", "Request failed");
+    } finally {
+      set({ loading: false });
+    }
+  },
 }));
