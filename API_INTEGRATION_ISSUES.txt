@@ -1,0 +1,26 @@
+# Notes on Integrating Anthropic and Pokémon APIs
+
+I wanted to jot down some of the main issues I ran into while implementing both the Anthropic and Pokémon APIs in this project. Hopefully, this helps me (or anyone else) remember the gotchas if I ever need to revisit or refactor this code.
+
+## Anthropic API
+
+- **Authentication & API Keys:**
+  Figuring out the right way to securely store and access the Anthropic API key was a bit of a pain. I had to make sure not to accidentally commit it, and also needed to handle missing or invalid keys gracefully in the app.
+
+- **Request/Response Format:**
+  The API expects a very specific JSON structure, and the docs weren’t always super clear. I had to experiment a bit to get the payload just right, especially for chat-like interactions.
+
+- **Error Handling:**
+  Sometimes the API would return vague errors, or just fail silently. I had to add extra logging and defensive checks to make sure the app didn’t just hang or crash if something went wrong.
+
+## Pokémon API
+
+- **Rate Limiting:**
+  The public Pokémon API has some rate limits, and I hit them a few times during development. I had to add some basic retry logic and be careful not to spam requests, especially when testing.
+
+- **Data Structure:**
+  The data returned by the Pokémon API is pretty nested and sometimes inconsistent. Mapping it to my app’s data model took a bit of trial and error, especially for things like sprites and type info.
+
+---
+
+Overall, both APIs work, but it took some tinkering and a few headaches to get everything running smoothly. If I ever swap out or upgrade these APIs, I’ll definitely want to revisit this file first!
