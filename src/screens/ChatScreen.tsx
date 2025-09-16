@@ -22,7 +22,7 @@ export const ChatScreen = () => {
         style={{ flexDirection: "row", gap: 8 }}
       >
         <TextInput
-          placeholder="Type a message"
+          placeholder="Ask me anything about Pokémon."
           value={input}
           onChangeText={setInput}
           placeholderTextColor={"#888"}

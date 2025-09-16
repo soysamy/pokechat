@@ -13,7 +13,6 @@ export const ChatBubble = ({
   role: "user" | "ai";
   image?: string;
 }) => {
-  console.log("Rendering ChatBubble with image:", image);
   return (
     <View
       style={[

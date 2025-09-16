@@ -2,7 +2,12 @@
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+} from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
 import type { RootStackParamList } from "../../App";
 
@@ -18,11 +23,15 @@ export const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+      style={styles.container}
+    >
       {/* Pokémon logo */}
       <Image
         source={{
-          uri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+          uri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/25.png",
         }}
         style={styles.logo}
       />
@@ -52,7 +61,7 @@ export const LoginScreen = () => {
           </Button>
         </Card.Content>
       </Card>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -65,13 +74,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   logo: {
-    width: 100,
+    width: 200,
     height: 100,
-    marginBottom: 24,
+    marginBottom: 10,
   },
   card: {
     width: "100%",
-    maxWidth: 360,
     borderRadius: 16,
     elevation: 4,
   },
@@ -83,6 +91,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 12,
+    width: "100%",
   },
   button: {
     marginTop: 8,
